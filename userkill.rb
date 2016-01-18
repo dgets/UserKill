@@ -37,7 +37,7 @@ ProcTable.ps{ |proc|
 	begin
 	    Process.kill(15, proc.pid)
 	rescue SystemCallError => e
-	    raise e unless e.errno == Errno::ESRCH
+	    raise e unless (e.errno == Errno::ESRCH)
 	end
     end
 }
