@@ -8,6 +8,11 @@ require 'sys/proctable'
 require 'optparse'
 include Sys
 
+#defaults (feel free to modify; should be self-explanatory)
+DEF_USER = "deschain"
+DEF_SIGNAL = 15
+VERBOSE = false
+
 def lookup_uid(username)
     require 'etc'
 
@@ -21,13 +26,20 @@ def lookup_uid(username)
 end
 
 if (ARGV[0] == "root")
-    puts "Unable to slaughter all of root's processes; this will\n"
-    puts "bring down the system!"
+    if (VERBOSE)
+	puts "Unable to slaughter all of root's processes; this will\n"
+    	puts "bring down the system!"
+    end
     exit
 end
 
-if (ARGV.size != 1)
-    uid = lookup_uid("deschain")
+if (ARGV.size < 1)
+    uid = lookup_uid(DEF_USER)
+else if (ARGV.size > 1 and VERBOSE)
+    	puts "Usage:\n\tKill all processes for hardcoded default user"
+    	puts "\n\tif not specified, or takes 1 argument as a username"
+    	puts "\n\tfor whose processes to slay."
+    exit
 else
     uid = lookup_uid(ARGV[0])
 end
@@ -35,11 +47,11 @@ end
 ProcTable.ps{ |proc|
     if (proc.uid == uid)
 	begin
-	    Process.kill(15, proc.pid)
+	    Process.kill(DEF_SIGNAL, proc.pid)
 	rescue SystemCallError => e
 	    raise e unless (e.errno == Errno::ESRCH)
 	end
     end
 }
 
-
+end
