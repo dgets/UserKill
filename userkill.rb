@@ -11,7 +11,7 @@ include Sys
 #defaults (feel free to modify; should be self-explanatory)
 DEF_USER = "deschain"
 DEF_SIGNAL = 15
-VERBOSE = false
+VERBOSE = true
 
 def lookup_uid(username)
     require 'etc'
@@ -33,6 +33,14 @@ if (ARGV[0] == "root")
     exit
 end
 
+if (VERBOSE)
+    begin
+    	puts "Attempting to slaughter processes for #{username}"
+    rescue
+	puts "Attempting to slaughter processes for #{DEF_USER}"
+    end
+end
+
 if (ARGV.size < 1)
     uid = lookup_uid(DEF_USER)
 else if (ARGV.size > 1 and VERBOSE)
@@ -46,6 +54,10 @@ end
 
 ProcTable.ps{ |proc|
     if (proc.uid == uid)
+	if (VERBOSE)
+	    puts "Attempting to kill #{uid}"
+	end
+
 	begin
 	    Process.kill(DEF_SIGNAL, proc.pid)
 	rescue SystemCallError => e
