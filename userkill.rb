@@ -6,6 +6,7 @@
 
 require 'sys/proctable'
 require 'optparse'
+require 'etc'
 include Sys
 
 #defaults (feel free to modify; should be self-explanatory)
@@ -14,8 +15,6 @@ DEF_SIGNAL = 15
 VERBOSE = true
 
 def lookup_uid(username)
-    require 'etc'
-
     begin
 	user = Etc.getpwnam(username)
     rescue ArgumentError
